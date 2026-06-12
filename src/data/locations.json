@@ -1,0 +1,10 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "مرکزی ہسپتال", "category": "Hospital" },
+      "geometry": { "type": "Point", "coordinates": [73.0791, 31.4504] }
+    }
+  ]
+}

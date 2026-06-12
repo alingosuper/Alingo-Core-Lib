@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>AlinGo Secure Voice Controller</title>
+</head>
+<body>
+    <h1>وائس سکیورٹی سسٹم</h1>
+    
+    <button onclick="handleAction('enroll')">آواز رجسٹر کریں</button>
+    <button onclick="handleAction('login')">لاگ ان کریں</button>
+    <button id="micBtn" disabled>وائس کمانڈ دیں</button>
+
+    <script type="module">
+        import { Enrollment } from './js/enrollment.js';
+        import { VoiceEngine } from './js/engine.js';
+        import { performSearch } from './js/search-engine.js';
+        import { IntentHandler } from './js/intent-handler.js';
+        import { startVoiceSearch } from './js/voice-auth.js';
+
+        let isUserAuthenticated = false;
+        let isAppSleeping = false;
+        const WAKE_WORD = "آلینگو جاگ جاؤ";
+        const recognition = VoiceEngine.init();
+
+        function goToSleep() {
+            isAppSleeping = true;
+            console.log("ایپ سلیپ موڈ میں ہے...");
+        }
+
+        window.handleAction = async (type) => {
+            try {
+                if (type === 'enroll') {
+                    await Enrollment.registerVoice();
+                } else if (type === 'login') {
+                    // ملٹی فیکٹر آتھنٹیکیشن: فنگر پرنٹ + وائس
+                    const isBiometricValid = await AuthManager.verifyBiometric();
+                    if (isBiometricValid) {
+                        recognition.start();
+                        recognition.onresult = (event) => {
+                            isUserAuthenticated = true;
+                            document.getElementById('micBtn').disabled = false;
+                            VoiceEngine.startInactivityTimer(goToSleep, 30000);
+                            alert("خوش آمدید! آپ تصدیق شدہ ہیں۔");
+                        };
+                    } else {
+                        alert("بائیو میٹرک تصدیق ناکام!");
+                    }
+                }
+            } catch (err) {
+                alert("سیکیورٹی ایرر");
+            }
+        };
+
+        document.getElementById('micBtn').onclick = () => {
+            if(isUserAuthenticated) recognition.start();
+        };
+
+        recognition.onresult = (event) => {
+            const result = event.results[0][0];
+            
+            // 1. کانفیڈنس اور نوائز چیک
+            if (!VoiceEngine.isConfidenceValid(result)) {
+                console.warn("آواز واضح نہیں ہے");
+                return;
+            }
+
+            const transcript = result.transcript;
+            
+            if (isAppSleeping) {
+                if (transcript.includes(WAKE_WORD)) {
+                    isAppSleeping = false;
+                    alert("آلینگو بیدار ہو گیا!");
+                    VoiceEngine.resetTimer(goToSleep);
+                }
+                return;
+            }
+
+            VoiceEngine.resetTimer(goToSleep);
+
+            const command = SearchEngine.processCommand(transcript);
+            if (command.action === "DEVICE_LOCK") {
+                isUserAuthenticated = false;
+                document.getElementById('micBtn').disabled = true;
+                alert("ڈیوائس لاک کر دی گئی");
+            } else {
+                const action = IntentHandler.handle(transcript);
+                executeAction(action);
+            }
+        };
+
+        function executeAction(action) {
+            switch(action.route) {
+                case "BOOK_RIDE": window.location.href = "/alinGo-ride.html"; break;
+                case "MAKE_CALL": alert("کال: " + action.data.target); break;
+                default: console.log("سرچ:", action.query);
+            }
+        }
+
+        recognition.onerror = () => alert("مائیکروفون میں مسئلہ ہے!");
+    </script>
+</body>
+</html>
