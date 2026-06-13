@@ -39,3 +39,10 @@ export const renderHeader = () => {
     `;
 };
 
+export const Header = () => `
+  <div style="padding:15px; background:white; display:flex; justify-content:space-between; align-items:center;">
+    <b>TEZRO</b>
+    <div>📍 Lahore</div>
+  </div>
+  <input type="text" placeholder="Search for products..." style="width:90%; margin:10px; padding:10px; border-radius:20px; border:1px solid #ddd;">
+`;

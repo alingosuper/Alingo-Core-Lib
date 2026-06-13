@@ -3,7 +3,7 @@ export const fetchLocations = async (category) => {
   console.log(`Fetching data for: ${category}`);
   return { status: 'success', data: [] };
 };
-import { master_shield } from '../../Alingo-core-security/src/security_engine.js';
+import { master_shield } from '@alingo/core-security/engine';
 
 export const filterLocations = (allData, query) => {
     return allData.features.filter(item => 

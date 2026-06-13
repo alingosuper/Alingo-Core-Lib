@@ -31,3 +31,21 @@ function buildFooterTab(id, icon, label, activeTab) {
     const colorClass = isActive ? "text-green-400" : "text-white/80";
     return `<button onclick="window.switchMainTab('${id}')" class="flex flex-col items-center justify-center w-11 h-11 active:scale-90 transition-transform ${colorClass}"><span class="material-icons text-base block">${icon}</span><span class="text-[7px] font-black tracking-tighter mt-0.5 whitespace-nowrap">${label}</span></button>`;
 }
+export const Footer = () => `
+  <footer style="background:#0a1930; color:white; padding:15px; display:flex; justify-content:space-around; align-items:center; border-radius:15px 15px 0 0;">
+    <div style="text-align:center;">🏠<br><small>Home</small></div>
+    <div style="text-align:center;">▦<br><small>Categories</small></div>
+    <div style="text-align:center;">💼<br><small>Orders</small></div>
+    <div style="background:green; padding:10px; border-radius:50%; margin-top:-30px;">TEZRO</div>
+    <div style="text-align:center;">💳<br><small>Wallet</small></div>
+    <div style="text-align:center;">⭐<br><small>Offers</small></div>
+    <div style="text-align:center;">👤<br><small>Account</small></div>
+  </footer>
+
+  <div style="background:#f4f7f6; padding:15px; display:flex; justify-content:space-between; font-size:10px; border-top:1px solid #ddd;">
+    <div style="text-align:center;">🛡️<br><b>SAFE</b><br>محفوظ</div>
+    <div style="text-align:center;">👆<br><b>EASY</b><br>آسان</div>
+    <div style="text-align:center;">💳<br><b>PAYMENT</b><br>ادائیگی</div>
+    <div style="text-align:center;">✅<br><b>SATISFIED</b><br>اطمینان</div>
+  </div>
+`;
